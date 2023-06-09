@@ -69,6 +69,7 @@ if ($input["action"] == "confirm") {
             "userId" => explode("-", $input["requestId"])[0],
             "status" => 1,
             "ttn" => $createTTN["data"][0]["IntDocNumber"],
+            "phone" => $phone,
         ];
         file_put_contents("ttn/".$createTTN["data"][0]["IntDocNumber"], json_encode($ttnData));
         $result["document"] = $ttnData;
