@@ -1,0 +1,105 @@
+<html>
+    <head>
+        <title>NovaPoshta - Smart Sender</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <script src="script.js"></script>
+        <link rel="stylesheet" href="style.css" />
+        <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+        <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    </head>
+    <body>
+        <div class="app">
+            <div class="header">
+                <div class="title">Налаштування інтеграції з "Нова Пошта"</div>
+            </div>
+            <div class="settings">
+                <div class="setting form">
+                    <div class="setting-view-1 hidden">
+                        <div class="novaposhta state">
+                            <p>Підключення виконано</p>
+                            <p id="np-sender"></p>
+                        </div>
+                        <div class="smartsender state">
+                            <p>Підключення виконано</p>
+                            <p id="ss-project"></p>
+                        </div>
+                    </div>
+                    <div class="setting-form-1 hidden">
+                        <form onsubmit="keysform()">
+                            <div class="inputElems">
+                                <div class="elem">
+                                    <div class="label">Вкажіть API-ключ Нової Пошти</div>
+                                    <div class="input">
+                                        <input id="npkey" required />
+                                    </div>
+                                </div>
+                                <div class="elem">
+                                    <div class="label">Вкажіть API-ключ Smart Sender</div>
+                                    <div class="input">
+                                        <input id="sskey" required />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="elem submit-elem">
+                                <div class="input">
+                                    <button type="submit">
+                                        <div class="saveKeys">Зберегти</div>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="setting-form-2 hidden">
+                        <form onsubmit="senderform()" id="senderform">
+                            <div class="elem hidden">
+                                <div class="input">
+                                    <input id="senderRef" />
+                                    <input id="senderContactRef" />
+                                </div>
+                            </div>
+                            <div class="inputElems">
+                                <div class="elem">
+                                    <div class="label">Контактна особа</div>
+                                    <div class="input">
+                                        <input id="senderName" required readonly />
+                                    </div>
+                                </div>
+                                <div class="elem">
+                                    <div class="label">Телефон</div>
+                                    <div class="input">
+                                        <input id="senderPhone" required />
+                                    </div>
+                                </div>
+                                <div class="elem">
+                                    <div class="label">Місто (почніть вводити)</div>
+                                    <div class="input">
+                                        <input id="senderCity" required oninput="loadCity()" list="npCity" />
+                                        <input id="cityRef" type="hidden" />
+                                    </div>
+                                    <div class="cityList"></div>
+                                </div>
+                                <div class="elem">
+                                    <div class="label">Відділення НП</div>
+                                    <div class="input">
+                                        <select id="senderNP" required list="npWH" placeholder="Спочатку виберіть місто"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="elem submit-elem">
+                                <div class="input">
+                                    <button type="submit">
+                                        <div class="saveKeys">Зберегти</div>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="n-loader">
+            <div></div>
+        </div>
+    </body>
+</html>
