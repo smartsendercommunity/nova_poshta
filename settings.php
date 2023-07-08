@@ -144,7 +144,7 @@ if ($_SERVER["REQUEST_METHOD"] == 'GET') {
         echo json_encode($result, JSON_UNESCAPED_UNICODE);
         exit;
     }
-    $result["writeSender"] = file_put_contents("sender.php", '<?php'.PHP_EOL.PHP_EOL.'$city = "'.$input["city"].'";'.PHP_EOL.'$warehouse = "'.$input["warehouse"].'";'.PHP_EOL.'$name = "'.$input["name"].'";'.PHP_EOL.'$phone = "'.$input["phone"].'";'.PHP_EOL.'$cityName = "'.$input["cityName"].'";'.PHP_EOL.'$warehouseName = "'.$input["warehouseName"].'";'.PHP_EOL.'$senderRef = "'.$input["senderRef"].'";'.PHP_EOL.'$senderContactRef = "'.$input["senderContactRef"].'";');
+    $result["writeSender"] = file_put_contents("sender.php", '<?php'.PHP_EOL.PHP_EOL.'$city = "'.$input["city"].'";'.PHP_EOL.'$warehouse = "'.$input["warehouse"].'";'.PHP_EOL.'$name = "'.$input["name"].'";'.PHP_EOL.'$phone = "'.$input["phone"].'";'.PHP_EOL.'$cityName = "'.$input["cityName"].'";'.PHP_EOL.'$warehouseName = "'.substr(json_encode($input["warehouseName"], JSON_UNESCAPED_UNICODE),1,-1).'";'.PHP_EOL.'$senderRef = "'.$input["senderRef"].'";'.PHP_EOL.'$senderContactRef = "'.$input["senderContactRef"].'";');
     if ($result["writeSender"]) {
         $result["state"] = true;
         $result["sender"] = $input;
