@@ -171,7 +171,7 @@ function citySelect() {
         var whSelect = document.getElementById("senderNP");
         var approveWH = false;
         for (var whc = 0; whc < result.wh.length; whc++) {
-            if (result.wh[whc].CategoryOfWarehouse == "Branch") {
+            if (result.wh[whc].CategoryOfWarehouse == "Branch" || result.wh[whc].CategoryOfWarehouse == "DropOff") {
                 approveWH = true;
                 var whOpt = document.createElement("option");
                 whOpt.innerHTML = result.wh[whc].Description;
