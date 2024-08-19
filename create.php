@@ -99,6 +99,18 @@ if ($input["action"] == "confirm") {
         $result["state"] = false;
         $result["error"]["message"][] = "'weight' is missing";
     }
+    if ($input["width"] == NULL) {
+        $input["width"] = "30";
+    }
+    if ($input["height"] == NULL) {
+        $input["height"] = "30";
+    }
+    if ($input["length"] == NULL) {
+        $input["length"] = "30";
+    }
+    if ($input["volume"] == NULL) {
+        $input["volume"] = "10";
+    }
     if ($input["firstName"] == NULL) {
         $result["state"] = false;
         $result["error"]["message"][] = "'firstName' is missing";
@@ -196,6 +208,15 @@ if ($input["action"] == "confirm") {
             "Recipient" => $createContact["data"][0]["Ref"],
             "ContactRecipient" => $createContact["data"][0]["ContactPerson"]["data"][0]["Ref"],
             "RecipientsPhone" => $input["phone"],
+            "OptionsSeat" => [
+                [
+                    "volumetricVolume" => $input["volume"],
+                    "volumetricWidth" => $input["width"],
+                    "volumetricLength" => $input["length"],
+                    "volumetricHeight" => $input["height"],
+                    "weight" => $input["weight"],
+                ]
+            ]
         ],
         "posts" => $posts
     ];
