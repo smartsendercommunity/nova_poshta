@@ -55,6 +55,25 @@ if ($input["action"] == "confirm") {
         $request["methodProperties"]["RecipientAddress"] = $request["posts"][$input["warehouse"]]["Ref"];
         unset($request["posts"]);
     } else {
+        $result["state"] = false;
+        $result["error"]["message"][] = "'warehouse' is not found in this request";
+        echo json_encode($result);
+        exit;
+    }
+    $createTTN = json_decode(send_forward(json_encode($request), "https://api.novaposhta.ua/v2.0/json/"), true);
+    if (file_exists("ttn") != true) {
+        mkdir("ttn");
+    }
+    if ($createTTN["success"] == true) {
+        $ttnData = [
+            "userId" => explode("-", $input["requestId"])[0],
+            "status" => 1,
+            "ttn" => $createTTN["data"][0]["IntDocNumber"],
+            "phone" => $phone,
+        ];
+        file_put_contents("ttn/".$createTTN["data"][0]["IntDocNumber"], json_encode($ttnData));
+        $result["document"] = $ttnData;
+    } else {
         // Перевірка на наявність передбачених помилок та їх виправлення
         if (in_array(20000204637, $createTTN["errorCodes"])) {
             // Неможливо використати післяплату, використовуємо "Контроль оплати"
@@ -77,25 +96,6 @@ if ($input["action"] == "confirm") {
             $result["error"]["message"][] = "failed create ttn";
             $result["error"]["novaposhta"] = $createTTN;
         }
-        $result["state"] = false;
-        $result["error"]["message"][] = "'warehouse' is not found in this request";
-        echo json_encode($result);
-        exit;
-    }
-    $createTTN = json_decode(send_forward(json_encode($request), "https://api.novaposhta.ua/v2.0/json/"), true);
-    if (file_exists("ttn") != true) {
-        mkdir("ttn");
-    }
-    if ($createTTN["success"] == true) {
-        $ttnData = [
-            "userId" => explode("-", $input["requestId"])[0],
-            "status" => 1,
-            "ttn" => $createTTN["data"][0]["IntDocNumber"],
-            "phone" => $phone,
-        ];
-        file_put_contents("ttn/".$createTTN["data"][0]["IntDocNumber"], json_encode($ttnData));
-        $result["document"] = $ttnData;
-    } else {
         $result["state"] = false;
         $result["error"]["message"][] = "failed create ttn";
         $result["error"]["novaposhta"] = $createTTN;
@@ -271,4 +271,5 @@ if ($input["action"] == "confirm") {
     $result["requestId"] = $requestId;
 }
 echo json_encode($result, JSON_UNESCAPED_UNICODE);
+
 
