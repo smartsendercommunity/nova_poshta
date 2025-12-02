@@ -75,9 +75,28 @@ if ($input["action"] == "confirm") {
         file_put_contents("ttn/" . $createTTN["data"][0]["IntDocNumber"], json_encode($ttnData));
         $result["document"] = $ttnData;
     } else {
-        $result["state"] = false;
-        $result["error"]["message"][] = "failed create ttn";
-        $result["error"]["novaposhta"] = $createTTN;
+        // Перевірка на наявність передбачених помилок та їх виправлення
+        if (in_array(20000204637, $createTTN["errorCodes"])) {
+            // Неможливо використати післяплату, використовуємо "Контроль оплати"
+            $request["methodProperties"]["AfterpaymentOnGoodsCost"] = $request["methodProperties"]["BackwardDeliveryData"][0]["RedeliveryString"];
+            unset($request["methodProperties"]["BackwardDeliveryData"]);
+        }
+        // Повторна спроба
+        $createTTN = json_decode(send_forward(json_encode($request), "https://api.novaposhta.ua/v2.0/json/"), true);
+        if ($createTTN["success"] == true) {
+            $ttnData = [
+                "userId" => explode("-", $input["requestId"])[0],
+                "status" => 1,
+                "ttn" => $createTTN["data"][0]["IntDocNumber"],
+                "phone" => $phone,
+            ];
+            file_put_contents("ttn/".$createTTN["data"][0]["IntDocNumber"], json_encode($ttnData));
+            $result["document"] = $ttnData;
+        } else {
+            $result["state"] = false;
+            $result["error"]["message"][] = "failed create ttn";
+            $result["error"]["novaposhta"] = $createTTN;
+        }
     }
 } else {
     if ($input["userId"] == NULL) {
@@ -99,6 +118,18 @@ if ($input["action"] == "confirm") {
     if ($input["weight"] == NULL) {
         $result["state"] = false;
         $result["error"]["message"][] = "'weight' is missing";
+    }
+    if ($input["width"] == NULL) {
+        $input["width"] = "30";
+    }
+    if ($input["height"] == NULL) {
+        $input["height"] = "30";
+    }
+    if ($input["length"] == NULL) {
+        $input["length"] = "30";
+    }
+    if ($input["volume"] == NULL) {
+        $input["volume"] = "10";
     }
     if ($input["firstName"] == NULL) {
         $result["state"] = false;
@@ -211,6 +242,15 @@ if ($input["action"] == "confirm") {
             "Recipient" => $createContact["data"][0]["Ref"],
             "ContactRecipient" => $createContact["data"][0]["ContactPerson"]["data"][0]["Ref"],
             "RecipientsPhone" => $input["phone"],
+            "OptionsSeat" => [
+                [
+                    "volumetricVolume" => $input["volume"],
+                    "volumetricWidth" => $input["width"],
+                    "volumetricLength" => $input["length"],
+                    "volumetricHeight" => $input["height"],
+                    "weight" => $input["weight"],
+                ]
+            ]
         ],
         "posts" => $posts
     ];
@@ -243,3 +283,4 @@ if ($input["action"] == "confirm") {
     $result["requestId"] = $requestId;
 }
 echo json_encode($result, JSON_UNESCAPED_UNICODE);
+
